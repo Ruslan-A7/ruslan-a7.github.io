@@ -4,21 +4,177 @@
   <meta charset="UTF-8">
   <title>Генератор PHP класів</title>
   <style>
-    body { font-family: sans-serif; margin: 20px; }
-    label { display: block; margin-top: 10px; }
-    .property-block { border: 1px solid #ccc; padding: 10px; margin-top: 10px; }
-    pre { background: #f4f4f4; padding: 15px; border-radius: 5px; white-space: pre-wrap; }
-    button { margin-top: 10px; }
-    .btn-group { margin-top: 20px; }
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: sans-serif;
+    }
+
+    body {
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      grid-template-columns: 30% 1fr;
+      grid-template-areas:
+        "header header"
+        "sidebar content"
+        "footer footer";
+    }
+
+    header {
+      grid-area: header;
+      background: #444;
+      color: white;
+      padding: 10px 20px;
+      font-size: 20px;
+      font-weight: bold;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    footer {
+      grid-area: footer;
+      background: #eee;
+      padding: 10px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    aside {
+      grid-area: sidebar;
+      border-right: 1px solid #ccc;
+      padding: 15px;
+      overflow-y: auto;
+    }
+
+    main {
+      grid-area: content;
+      padding: 15px;
+    }
+
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #ccc;
+      margin-bottom: 10px;
+    }
+
+    .tab-button {
+      padding: 10px;
+      cursor: pointer;
+      border: none;
+      background: #eee;
+      margin-right: 5px;
+    }
+
+    .tab-button.active {
+      background: #ddd;
+      font-weight: bold;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .property-block {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-top: 10px;
+    }
+
+    pre {
+      background: #f4f4f4;
+      padding: 10px;
+      white-space: pre-wrap;
+      margin-top: 20px;
+    }
+
+    button {
+      margin-top: 10px;
+    }
+
+    label {
+      display: block;
+      margin-top: 8px;
+    }
   </style>
+</head>
+<body>
+  <header>
+    Генератор PHP класів
+  </header>
+
+  <aside>
+    <form onsubmit="event.preventDefault();">
+      <label>Назва класу: <input name="class_name" required></label>
+      <label>Тип:
+        <select name="class_type">
+          <option value="class">Клас</option>
+          <option value="interface">Інтерфейс</option>
+          <option value="trait">Трейт</option>
+          <option value="enum">Enum</option>
+        </select>
+      </label>
+      <label><input type="checkbox" name="is_abstract"> Абстрактний клас</label>
+      <label>Namespace: <input name="namespace" placeholder="MyApp\\Models"></label>
+      <label>Коментар до класу:
+        <textarea name="class_comment" rows="3" placeholder="Опис призначення класу..."></textarea>
+      </label>
+
+      <button type="button" onclick="previewClass()">Попередній перегляд</button>
+      <button type="button" onclick="copyToClipboard()">Скопіювати</button>
+    </form>
+  </aside>
+
+  <main>
+    <div class="tabs">
+      <button class="tab-button active" onclick="openTab('properties')">Властивості</button>
+      <button class="tab-button" onclick="openTab('templates')">Шаблони</button>
+      <button class="tab-button" onclick="openTab('storage')">LocalStorage</button>
+    </div>
+
+    <div id="properties" class="tab-content active">
+      <button onclick="addProperty()">+ Додати властивість</button>
+      <div id="property-list"></div>
+    </div>
+
+    <div id="templates" class="tab-content">
+      <p>Шаблони будуть тут...</p>
+    </div>
+
+    <div id="storage" class="tab-content">
+      <p>LocalStorage буде тут...</p>
+    </div>
+
+    <h3>Попередній перегляд:</h3>
+    <pre id="preview"></pre>
+  </main>
+
+  <footer>
+    &copy; 2025 | Генератор PHP класів | Усі права захищено
+  </footer>
+
   <script>
+    function openTab(tabId) {
+      document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent.toLowerCase() === tabId);
+      });
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      document.getElementById(tabId).classList.add('active');
+    }
+
     function addProperty() {
-      const container = document.getElementById('properties');
+      const container = document.getElementById('property-list');
       const idx = container.children.length;
       const html = `
         <div class="property-block">
           <label>Назва: <input name="properties[${idx}][name]" required></label>
-          <label>Тип: <input name="properties[${idx}][type]" placeholder="string, int, SomeClass тощо"></label>
+          <label>Тип: <input name="properties[${idx}][type]"></label>
           <label>Рівень доступу:
             <select name="properties[${idx}][visibility]">
               <option value="private">private</option>
@@ -27,6 +183,7 @@
             </select>
           </label>
           <label>Значення за замовчуванням: <input name="properties[${idx}][default]"></label>
+          <label>Коментар: <input name="properties[${idx}][comment]" placeholder="Призначення змінної..."></label>
           <label><input type="checkbox" name="properties[${idx}][constructor]"> У конструктор</label>
           <label><input type="checkbox" name="properties[${idx}][getter]"> Гетер</label>
           <label><input type="checkbox" name="properties[${idx}][setter]"> Сетер</label>
@@ -36,25 +193,30 @@
     }
 
     function previewClass() {
-      const form = document.forms[0];
+      const form = document.querySelector('form');
       const className = form.class_name.value || 'MyClass';
       const classType = form.class_type.value || 'class';
       const isAbstract = form.is_abstract.checked;
       const namespace = form.namespace.value.trim();
-      const properties = form.querySelectorAll('.property-block');
+      const classComment = form.class_comment.value.trim();
+      const properties = document.querySelectorAll('#property-list .property-block');
 
       let lines = [];
 
-      // Namespace
       if (namespace) {
         lines.push(`namespace ${namespace};\n`);
       }
 
-      // Class Declaration
+      // Коментар до класу
+      if (classComment) {
+        lines.push("/**");
+        classComment.split('\n').forEach(line => lines.push(` * ${line}`));
+        lines.push(" */");
+      }
+
       const classDeclaration = `${isAbstract ? 'abstract ' : ''}${classType} ${className}`;
       lines.push(`${classDeclaration} {`);
 
-      // Properties
       const constructorParams = [];
       const constructorBody = [];
       const gettersSetters = [];
@@ -64,20 +226,23 @@
         const type = prop.querySelector(`[name="properties[${idx}][type]"]`).value;
         const visibility = prop.querySelector(`[name="properties[${idx}][visibility]"]`).value;
         const defaultValue = prop.querySelector(`[name="properties[${idx}][default]"]`).value;
+        const comment = prop.querySelector(`[name="properties[${idx}][comment]"]`).value;
         const addConstructor = prop.querySelector(`[name="properties[${idx}][constructor]"]`).checked;
         const addGetter = prop.querySelector(`[name="properties[${idx}][getter]"]`).checked;
         const addSetter = prop.querySelector(`[name="properties[${idx}][setter]"]`).checked;
 
+        if (comment) {
+          lines.push(`    /** ${comment} */`);
+        }
+
         const defaultStr = defaultValue ? ` = ${formatDefaultValue(defaultValue, type)}` : '';
         lines.push(`    ${visibility} ${type ? type + ' ' : ''}$${name}${defaultStr};`);
 
-        // Constructor
         if (addConstructor) {
           constructorParams.push(`${type ? type + ' ' : ''}$${name}`);
           constructorBody.push(`        $this->${name} = $${name};`);
         }
 
-        // Getter
         if (addGetter) {
           const ucName = capitalize(name);
           gettersSetters.push(`
@@ -86,7 +251,6 @@
     }`);
         }
 
-        // Setter
         if (addSetter) {
           const ucName = capitalize(name);
           gettersSetters.push(`
@@ -96,76 +260,40 @@
         }
       });
 
-      // Constructor method
       if (constructorParams.length > 0) {
         lines.push('\n    public function __construct(' + constructorParams.join(', ') + ') {');
         lines = lines.concat(constructorBody);
         lines.push('    }');
       }
 
-      // Getter & Setter methods
       if (gettersSetters.length > 0) {
         lines.push('');
         lines = lines.concat(gettersSetters);
       }
 
       lines.push('}');
-
-      const result = '<?php\n\n' + lines.join('\n') + '\n';
-
-      document.getElementById('preview').textContent = result;
-    }
-
-    function capitalize(str) {
-      return str.charAt(0).toUpperCase() + str.slice(1);
-    }
-
-    function formatDefaultValue(value, type) {
-      if (type === 'string' || type === 'mixed' || type === '') {
-        return `'${value.replace(/'/g, "\\'")}'`;
-      } else if (type === 'bool' || type === 'boolean') {
-        return value === 'true' || value === '1' ? 'true' : 'false';
-      } else {
-        return value;
-      }
+      document.getElementById('preview').textContent = '<?php\n\n' + lines.join('\n') + '\n';
     }
 
     function copyToClipboard() {
       const text = document.getElementById('preview').textContent;
       navigator.clipboard.writeText(text).then(() => {
         alert('Код скопійовано в буфер обміну!');
-      }).catch(err => {
-        alert('Помилка при копіюванні: ' + err);
       });
     }
+
+    function formatDefaultValue(value, type) {
+      if (type === 'string') {
+        return `'${value.replace(/'/g, "\\'")}'`;
+      } else if (type === 'bool' || type === 'boolean') {
+        return value === 'true' || value === '1' ? 'true' : 'false';
+      }
+      return value;
+    }
+
+    function capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
   </script>
-</head>
-<body>
-  <h1>Генератор PHP класів (JS версія)</h1>
-  <form onsubmit="event.preventDefault();">
-    <label>Назва класу: <input name="class_name" required></label>
-    <label>Тип:
-      <select name="class_type">
-        <option value="class">Клас</option>
-        <option value="interface">Інтерфейс</option>
-        <option value="trait">Трейт</option>
-        <option value="enum">Enum</option>
-      </select>
-    </label>
-    <label><input type="checkbox" name="is_abstract"> Абстрактний клас</label>
-    <label>Namespace: <input name="namespace" placeholder="MyApp\\Models"></label>
-
-    <h3>Властивості:</h3>
-    <div id="properties"></div>
-    <button type="button" onclick="addProperty()">+ Додати властивість</button>
-
-    <div class="btn-group">
-      <button type="button" onclick="previewClass()">Попередній перегляд</button>
-      <button type="button" onclick="copyToClipboard()">Скопіювати</button>
-    </div>
-  </form>
-
-  <h3>Попередній перегляд PHP класу:</h3>
-  <pre id="preview"></pre>
 </body>
 </html>
