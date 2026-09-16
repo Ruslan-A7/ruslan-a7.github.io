@@ -1,21 +1,68 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="uk">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ruslan A7</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0e0b13">
+  <meta name="description" content="RA7 — персональна цифрова візитівка.">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/avatar.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+  <title>RA7 — digital card</title>
 </head>
-<body>
-    <h1>Ruslan A7 (RA7)</h1>
-    <div>
-        <h2>English</h2>
-        <p>The site is under development!</p>
-        <p>You can read the license here:  <a href="/LICENSE.md">LICENSE</a>.</p>
-    </div>
-    <div>
-        <h2>Українською</h2>
-        <p>Сайт в розробці!</p>
-        <p>Ознайомитись з ліцензією можна тут: <a href="/LICENSE.md">ЛІЦЕНЗІЯ</a>.</p>
-    </div>
+<body data-page="home">
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+  <header class="topbar shell">
+    <a class="brand" href="/" aria-label="RA7 — головна">RA<span>7</span></a>
+    <button class="language-switch" type="button" aria-label="Змінити мову" data-language-toggle>EN</button>
+  </header>
+
+  <main>
+    <section class="card-scroll" aria-label="Персональна картка">
+      <div class="card-stage shell">
+        <div class="card-hint" data-i18n="scrollHint">Прокрутіть, щоб відкрити</div>
+        <article class="profile-card" data-card>
+          <div class="card-face card-front">
+            <div class="card-noise"></div>
+            <div class="card-topline"><span>PERSONAL ID</span><span>01 / 02</span></div>
+            <div class="portrait-wrap"><img src="/assets/avatar.svg" alt="Аватар профілю" data-profile-avatar></div>
+            <div class="identity">
+              <p class="eyebrow" data-i18n="eyebrow">Цифрова візитівка</p>
+              <h1 data-profile-name>RA7</h1>
+              <p class="handle" data-profile-handle>@ra7</p>
+            </div>
+            <div class="card-footer"><span data-i18n="available">Доступний для нових ідей</span><span class="status-dot"></span></div>
+          </div>
+          <div class="card-face card-back">
+            <div class="card-noise"></div>
+            <div class="card-topline"><span>PROFILE NOTES</span><span>02 / 02</span></div>
+            <div class="back-content">
+              <p class="eyebrow" data-i18n="aboutLabel">Коротко про мене</p>
+              <h2 data-i18n="aboutTitle">Створюю речі,<br><em>які хочеться</em><br>відкрити.</h2>
+              <p class="bio" data-i18n="bio">Розробник і дослідник цифрових продуктів. Люблю ясні інтерфейси, сильні ідеї та деталі, які залишаються з вами.</p>
+              <div class="contacts">
+                <a href="https://github.com/ra7" target="_blank" rel="noreferrer"><span>GitHub</span><span>↗</span></a>
+                <a href="https://www.instagram.com/ruslan_a7" target="_blank" rel="noreferrer"><span>Instagram</span><span>↗</span></a>
+                <a href="/license"><span data-i18n="licenseLink">Ліцензія</span><span>↗</span></a>
+              </div>
+            </div>
+            <div class="card-footer"><span>RA7 / 2026</span><span>✦</span></div>
+          </div>
+        </article>
+        <div class="scroll-progress"><span data-progress></span></div>
+      </div>
+    </section>
+
+    <section class="under-card shell">
+      <p class="section-kicker">STAY TUNED</p>
+      <h2 data-i18n="buildingTitle">Сайт ще<br><em>в розробці.</em></h2>
+      <p data-i18n="buildingText">Це тимчасова сторінка, але вже зараз тут є місце для важливого.</p>
+      <a class="text-link" href="/license"><span data-i18n="readLicense">Переглянути ліцензію</span><span>↗</span></a>
+    </section>
+  </main>
+
+  <footer class="site-footer shell"><span>© 2026 RA7</span><span data-i18n="footerText">Зроблено з увагою до деталей</span></footer>
+  <script src="/app.js" defer></script>
 </body>
 </html>
