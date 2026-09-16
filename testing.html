@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Генератор PHP класів</title>
+  <style>
+    body { font-family: sans-serif; margin: 20px; }
+    label { display: block; margin-top: 10px; }
+    .property-block { border: 1px solid #ccc; padding: 10px; margin-top: 10px; }
+    pre { background: #f4f4f4; padding: 15px; border-radius: 5px; }
+  </style>
+  <script>
+    function addProperty() {
+      const container = document.getElementById('properties');
+      const idx = container.children.length;
+      const html = `
+        <div class="property-block">
+          <label>Назва: <input name="properties[${idx}][name]" required></label>
+          <label>Тип: <input name="properties[${idx}][type]" placeholder="string, int, SomeClass тощо"></label>
+          <label>Рівень доступу:
+            <select name="properties[${idx}][visibility]">
+              <option value="private">private</option>
+              <option value="protected">protected</option>
+              <option value="public">public</option>
+            </select>
+          </label>
+          <label>Значення за замовчуванням: <input name="properties[${idx}][default]"></label>
+          <label><input type="checkbox" name="properties[${idx}][constructor]"> У конструктор</label>
+          <label><input type="checkbox" name="properties[${idx}][getter]"> Гетер</label>
+          <label><input type="checkbox" name="properties[${idx}][setter]"> Сетер</label>
+        </div>
+      `;
+      container.insertAdjacentHTML('beforeend', html);
+    }
+
+    function previewClass() {
+      const form = document.forms[0];
+      const className = form.class_name.value || 'MyClass';
+      const classType = form.class_type.value || 'class';
+      const isAbstract = form.is_abstract.checked;
+      const namespace = form.namespace.value.trim();
+      const properties = form.querySelectorAll('.property-block');
+
+      let lines = [];
+
+      // Namespace
+      if (namespace) {
+        lines.push(`namespace ${namespace};\n`);
+      }
+
+      // Class Declaration
+      const classDeclaration = `${isAbstract ? 'abstract ' : ''}${classType} ${className}`;
+      lines.push(`${classDeclaration} {`);
+
+      // Properties
+      const constructorParams = [];
+      const constructorBody = [];
+      const gettersSetters = [];
+
+      properties.forEach((prop, idx) => {
+        const name = prop.querySelector('[name="properties[' + idx + '][name]"]').value;
+        const type = prop.querySelector('[name="properties[' + idx + '][type]"]').value;
+        const visibility = prop.querySelector('[name="properties[' + idx + '][visibility]"]').value;
+        const defaultValue = prop.querySelector('[name="properties[' + idx + '][default]"]').value;
+        const addConstructor = prop.querySelector('[name="properties[' + idx + '][constructor]"]').checked;
+        const addGetter = prop.querySelector('[name="properties[' + idx + '][getter]"]').checked;
+        const addSetter = prop.querySelector('[name="properties[' + idx + '][setter]"]').checked;
+
+        const defaultStr = defaultValue ? ` = ${JSON.stringify(defaultValue)}` : '';
+        lines.push(`    ${visibility} ${type ? type + ' ' : ''}$${name}${defaultStr};`);
+
+        // Constructor
+        if (addConstructor) {
+          constructorParams.push(`${type} $${name}`);
+          constructorBody.push(`        $this->${name} = $${name};`);
+        }
+
+        // Getter
+        if (addGetter) {
+          const ucName = name.charAt(0).toUpperCase() + name.slice(1);
+          gettersSetters.push(`
+    public function get${ucName}(): ${type || 'mixed'} {
+        return $this->${name};
+    }`);
+        }
+
+        // Setter
+        if (addSetter) {
+          const ucName = name.charAt(0).toUpperCase() + name.slice(1);
+          gettersSetters.push(`
+    public function set${ucName}(${type ? type + ' ' : ''}$${name}): void {
+        $this->${name} = $${name};
+    }`);
+        }
+      });
+
+      // Constructor method
+      if (constructorParams.length > 0) {
+        lines.push('\n    public function __construct(' + constructorParams.join(', ') + ') {');
+        lines = lines.concat(constructorBody);
+        lines.push('    }');
+      }
+
+      // Getter & Setter methods
+      if (gettersSetters.length > 0) {
+        lines.push('');
+        lines = lines.concat(gettersSetters);
+      }
+
+      lines.push('}');
+
+      // Preview output
+      document.getElementById('preview').textContent = '<?php\n\n' + lines.join('\n') + '\n}';
+    }
+  </script>
+</head>
+<body>
+  <h1>Генератор PHP класів</h1>
+  <form action="generator.php" method="POST">
+    <label>Назва класу: <input name="class_name" required></label>
+    <label>Тип:
+      <select name="class_type">
+        <option value="class">Клас</option>
+        <option value="interface">Інтерфейс</option>
+        <option value="trait">Трейт</option>
+        <option value="enum">Enum</option>
+      </select>
+    </label>
+    <label><input type="checkbox" name="is_abstract"> Абстрактний клас</label>
+    <label>Namespace: <input name="namespace" placeholder="MyApp\\Models"></label>
+
+    <h3>Властивості:</h3>
+    <div id="properties"></div>
+    <button type="button" onclick="addProperty()">+ Додати властивість</button>
+
+    <br><br>
+    <button type="button" onclick="previewClass()">Попередній перегляд</button>
+    <button type="submit">Згенерувати</button>
+  </form>
+
+  <h3>Попередній перегляд PHP класу:</h3>
+  <pre id="preview"></pre>
+</body>
+</html>
