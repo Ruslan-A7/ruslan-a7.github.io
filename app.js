@@ -1,7 +1,7 @@
 const profile = {
   name: 'RA7',
   handle: '@ra7',
-  avatar: '/assets/avatar.svg'
+  avatar: 'https://avatars.githubusercontent.com/u/169072120?v=4'
 };
 
 const translations = {
