@@ -88,7 +88,7 @@ if (licenseContent) {
     flushParagraph(); closeList();
     return output.join('');
   };
-  fetch('/LICENSE.md').then((response) => {
+  fetch('/LICENSE_v11.03.2025.md').then((response) => {
     if (!response.ok) throw new Error('License unavailable');
     return response.text();
   }).then((markdown) => { licenseContent.innerHTML = renderMarkdown(markdown); })
