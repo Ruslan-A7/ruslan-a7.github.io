@@ -1,5 +1,5 @@
 const CACHE_NAME = 'ra7-card-v5';
-const ASSETS = ['/', '/index.html', '/license/', '/license/index.html', '/styles.css', '/app.js', '/manifest.json', '/LICENSE.md', '/assets/avatar.svg'];
+const ASSETS = ['/', '/index.html', '/mylic/', '/mylic/index.html', '/styles.css', '/app.js', '/manifest.json', '/LICENSE.md', '/assets/avatar.svg'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)).then(() => self.skipWaiting()));
