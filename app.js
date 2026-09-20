@@ -76,8 +76,8 @@ if (licenseContent) {
       }
       if (codeLines) { codeLines.push(line); return; }
       const heading = line.match(/^(#{1,6})\s+(.+)$/);
-      const list = line.match(/^\s*([-*+] |\d+[.)] )(.+)$/);
-      if (!line.trim()) { flushParagraph(); closeList(); return; }
+      const list = line.match(/^\s*([-*+] |\d+(?:\.\d+)*[.)] )(.+)$/);
+      if (!line.trim()) { flushParagraph(); return; }
       if (heading) { flushParagraph(); closeList(); const level = heading[1].length; output.push(`<h${level}>${renderInline(heading[2])}</h${level}>`); return; }
       if (/^\s*(---+|\*\*\*+)\s*$/.test(line)) { flushParagraph(); closeList(); output.push('<hr>'); return; }
       if (list) { flushParagraph(); const nextType = /^\d/.test(list[1]) ? 'ol' : 'ul'; if (listType !== nextType) { closeList(); output.push(`<${nextType}>`); listType = nextType; } output.push(`<li>${renderInline(list[2])}</li>`); return; }
