@@ -88,10 +88,21 @@ if (licenseContent) {
     flushParagraph(); closeList();
     return output.join('');
   };
-  fetch('/LICENSE_v11.03.2025.md').then((response) => {
-    if (!response.ok) throw new Error('License unavailable');
-    return response.text();
-  }).then((markdown) => { licenseContent.innerHTML = renderMarkdown(markdown); })
+  const licenseSources = [
+    '/LICENSE_v11.03.2025.md',
+    'https://raw.githubusercontent.com/Ruslan-A7/ruslan-a7.github.io/main/LICENSE_v11.03.2025.md'
+  ];
+  const fetchLicense = (sourceIndex = 0) => fetch(licenseSources[sourceIndex], { cache: 'no-store' })
+    .then((response) => response.text().then((text) => ({ response, text })))
+    .then(({ response, text }) => {
+      const isHtmlFallback = /<!doctype html|<html[\s>]/i.test(text);
+      if (!response.ok || isHtmlFallback) {
+        if (sourceIndex + 1 < licenseSources.length) return fetchLicense(sourceIndex + 1);
+        throw new Error('License unavailable');
+      }
+      return text;
+    });
+  fetchLicense().then((markdown) => { licenseContent.innerHTML = renderMarkdown(markdown); })
     .catch(() => { licenseContent.innerHTML = '<p>License unavailable offline.</p>'; });
 }
 

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ra7-card-v7';
+const CACHE_NAME = 'ra7-card-v8';
 const ASSETS = ['/', '/index.html', '/styles.css', '/app.js', '/manifest.json', '/LICENSE_v11.03.2025.md', '/assets/avatar.svg'];
 
 self.addEventListener('install', (event) => {
