@@ -89,8 +89,8 @@ if (licenseContent) {
     return output.join('');
   };
   const licenseSources = [
-    '/LICENSE_v11.03.2025.md',
-    'https://raw.githubusercontent.com/Ruslan-A7/ruslan-a7.github.io/main/LICENSE_v11.03.2025.md'
+    '/LICENSE.md',
+    'https://raw.githubusercontent.com/Ruslan-A7/ruslan-a7.github.io/main/LICENSE.md'
   ];
   const fetchLicense = (sourceIndex = 0) => fetch(licenseSources[sourceIndex], { cache: 'no-store' })
     .then((response) => response.text().then((text) => ({ response, text })))
