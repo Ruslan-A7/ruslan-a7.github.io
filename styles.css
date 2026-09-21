@@ -49,7 +49,7 @@ em { color: var(--gold); font-style: normal; }
 .site-footer { display: flex; justify-content: space-between; padding: 26px 0; color: var(--muted); border-top: 1px solid var(--line); font: 10px 'DM Mono', monospace; letter-spacing: .08em; text-transform: uppercase; }
 .license-page { min-height: calc(100vh - 150px); padding: 12vh 0 14vh; }
 .license-heading { max-width: 720px; margin-bottom: 68px; }
-.license-heading h1 { margin-bottom: 18px; font-size: clamp(56px, 11vw, 130px); line-height: .85; letter-spacing: -.1em; }
+.license-heading h1, .license-heading h2 { margin-bottom: 18px; font-size: clamp(56px, 11vw, 130px); line-height: .85; letter-spacing: -.1em; }
 .license-heading > p:last-child { color: var(--muted); }
 .license-paper { max-width: 760px; padding: clamp(28px, 6vw, 68px); border: 1px solid var(--line); border-radius: 16px; background: var(--panel); backdrop-filter: blur(20px); line-height: 1.75; color: #d7cfdc; }
 .license-paper h1, .license-paper h2, .license-paper h3 { color: var(--ink); line-height: 1.1; letter-spacing: -.04em; }
